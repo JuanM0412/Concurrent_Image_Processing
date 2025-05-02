@@ -9,11 +9,13 @@ Una herramienta simple de línea de comandos para rotar y escalar imágenes usan
 - Soporte para múltiples formatos de imagen (PNG, JPEG, BMP)
 - Interfaz de línea de comandos fácil de usar
 - Manejo de memoria eficiente
+- Procesamiento optimizado usando **OpenMP** en funciones como rotación, escalado, carga y guardado de imágenes
 
 ## Requisitos
 
 - Compilador de C++ (g++ recomendado)
 - Make
+- OpenMP
 
 ## Instalación
 
@@ -74,6 +76,15 @@ Options:
 │   ├── stb_wrapper.cpp
 │   └── vector_image_memory_manager.cpp     
 ```
+
+## Optimización con OpenMP
+
+Se aplicaron mejoras de rendimiento mediante directivas de **OpenMP** en las siguientes operaciones:
+
+- `scaleImage`: Paralelizada por píxeles, utilizando `schedule(dynamic)`
+- `rotateImage` y `loadImage`: Paralelizada y optimizada para mejor balance de carga
+- `saveImage`: Acceso lineal a memoria e indexado unidimensional para reducir sobrecarga
+- Todas las funciones aprovechan múltiples núcleos para acelerar el procesamiento de imágenes
 
 ## Autores
 
