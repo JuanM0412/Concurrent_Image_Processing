@@ -79,12 +79,45 @@ Options:
 
 ## Optimización con OpenMP
 
-Se aplicaron mejoras de rendimiento mediante directivas de **OpenMP** en las siguientes operaciones:
+Para mejorar el rendimiento del procesamiento de imágenes, se utilizaron directivas de **OpenMP** en las funciones críticas que operan sobre cada píxel de la imagen. A continuación, se describen las principales directivas empleadas:
 
-- `scaleImage`: Paralelizada por píxeles, utilizando `schedule(dynamic)`
-- `rotateImage` y `loadImage`: Paralelizada y optimizada para mejor balance de carga
-- `saveImage`: Acceso lineal a memoria e indexado unidimensional para reducir sobrecarga
-- Todas las funciones aprovechan múltiples núcleos para acelerar el procesamiento de imágenes
+### `#pragma omp parallel for`
+Esta directiva paraleliza automáticamente un bucle for dividiendo su ejecución entre múltiples hilos del procesador. Fue utilizada en:
+
+- `loadImage`: para cargar los píxeles de la imagen en paralelo.
+
+- `saveImage`: para construir el buffer de salida en paralelo antes de guardar la imagen.
+
+- `scaleImage`: para realizar el escalado píxel a píxel de forma concurrente.
+
+- `rotateImage`: para aplicar la rotación a cada píxel en paralelo.
+
+### `schedule(static) y schedule(dynamic)`
+Estas opciones definen cómo se reparten las iteraciones del bucle entre los hilos:
+
+- `schedule(static)`: se usa cuando todas las iteraciones tienen un costo similar. Se aplica en `loadImage` y `saveImage`.
+
+- `schedule(dynamic)`: se usa cuando las iteraciones tienen un costo variable. En `scaleImage`, asegura una distribución de carga más equilibrada entre hilos.
+
+### `num_threads(omp_get_max_threads())`
+Permite especificar explícitamente el número de hilos que se utilizarán. En este caso, se configura para usar el máximo número de hilos disponibles en el sistema. Se usó en `scaleImage`.
+
+### `collapse(2)`
+Se emplea en bucles anidados para tratarlos como un solo bucle plano, mejorando la eficiencia del paralelismo. En `rotateImage`, permite procesar todos los píxeles `(x, y)` como una sola unidad de trabajo.
+
+#### Antes de usar OpenMP
+![alt text](img/before.jpeg)
+
+#### Después de usar OpenMP
+![alt text](img/after.jpeg)
+
+El uso de **OpenMP** permitió una reducción drástica de los tiempos de ejecución, principalmente en el escalado y la rotación de imágenes. Estas mejoras son especialmente notorias en imágenes de alta resolución, donde el procesamiento secuencial representa un cuello de botella. Con la paralelización:
+
+- Se aceleraron las funciones críticas del sistema.
+
+- Se logró una experiencia mucho más eficiente y receptiva.
+
+- Se mantuvo el uso de memoria en niveles similares, demostrando que la paralelización no comprometió la eficiencia espacial del programa.
 
 ## Autores
 
