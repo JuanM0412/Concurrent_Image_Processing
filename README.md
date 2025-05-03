@@ -106,10 +106,10 @@ Permite especificar explícitamente el número de hilos que se utilizarán. En e
 Se emplea en bucles anidados para tratarlos como un solo bucle plano, mejorando la eficiencia del paralelismo. En `rotateImage`, permite procesar todos los píxeles `(x, y)` como una sola unidad de trabajo.
 
 #### Antes de usar OpenMP
-![alt text](img/before.jpeg)
+![alt text](img/after.jpeg)
 
 #### Después de usar OpenMP
-![alt text](img/after.jpeg)
+![alt text](img/before.jpeg)
 
 El uso de **OpenMP** permitió una reducción drástica de los tiempos de ejecución, principalmente en el escalado y la rotación de imágenes. Estas mejoras son especialmente notorias en imágenes de alta resolución, donde el procesamiento secuencial representa un cuello de botella. Con la paralelización:
 
